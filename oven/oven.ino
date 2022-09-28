@@ -11,7 +11,7 @@
 #define RELAY_OFF_STATE HIGH
 #define RELAY_ON_STATE LOW
 
-#define MIN_TEMP           0.00
+#define MIN_TEMP          20.00
 #define MAX_TEMP         250.00
 #define SLOPE_PEAK_RISE    1.25
 #define SLOPE_PEAK_FALL    0.25
@@ -72,12 +72,15 @@ float getSlope() {
 void setup() {
   Serial.begin(9600);
   pinMode(RELAY_PIN, OUTPUT);
-  Serial.println("HELLO!");
-
-  delay(1000);
 }
 
 void loop() {
+  if (Serial.available()) {
+    float input = Serial.parseFloat();
+    if (input >= MIN_TEMP && input <= MAX_TEMP) {
+      targetTemp = input;
+    }
+  }
 
   float currentTemp = thermocouple.readCelsius();
   float currentTempF = thermocouple.readFahrenheit();
@@ -98,36 +101,36 @@ void loop() {
 
   digitalWrite(RELAY_PIN, heatOn ? RELAY_ON_STATE : RELAY_OFF_STATE);
 
-  Serial.print("TC = ");
+  //  Serial.print("T=");
   Serial.print(targetTemp);
   Serial.print("\t");
 
-  Serial.print("C = ");
+  //  Serial.print("C=");
   Serial.print(currentTemp);
   Serial.print("\t");
 
-  Serial.print("E = ");
+  //  Serial.print("E=");
   Serial.print(expectedTemp);
   Serial.print("\t");
 
-  Serial.print("S = ");
+  //  Serial.print("S=");
   Serial.print(slope);
   Serial.print("\t");
 
-  Serial.print("R = ");
+  //  Serial.print("R=");
   Serial.print(reference);
   Serial.print("\t");
 
-  Serial.print("M = ");
+  //  Serial.print("M=");
   Serial.print(heatMomentum);
   Serial.print("\t");
 
-  Serial.print("O = ");
+  //  Serial.print("O=");
   Serial.print(heatOn);
   Serial.print("\t");
 
-  Serial.print("F = ");
-  Serial.print(currentTempF);
+  //  Serial.print("F=");
+  //  Serial.print(currentTempF);
   Serial.print("\n");
 
   delay(INTERVAL);
